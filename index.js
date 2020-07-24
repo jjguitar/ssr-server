@@ -25,6 +25,7 @@ require("./utils/auth/strategies/basic");
 require("./utils/auth/strategies/oauth");
 
 // Twitter strategy
+require("./utils/auth/strategies/google");
 require("./utils/auth/strategies/twitter");
 require("./utils/auth/strategies/facebook");
 
@@ -126,6 +127,32 @@ app.get(
 app.get(
   "/auth/google-oauth/callback",
   passport.authenticate("google-oauth", { session: false }),
+  function(req, res, next) {
+    if (!req.user) {
+      next(boom.unauthorized());
+    }
+
+    const { token, ...user } = req.user;
+
+    res.cookie("token", token, {
+      httpOnly: !config.dev,
+      secure: !config.dev
+    });
+
+    res.status(200).json(user);
+  }
+);
+
+app.get(
+  "/auth/google",
+  passport.authenticate("google", {
+    scope: ["email", "profile", "openid"]
+  })
+);
+
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", { session: false }),
   function(req, res, next) {
     if (!req.user) {
       next(boom.unauthorized());
