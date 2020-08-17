@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const config = {
   dev: process.env.NODE_ENV !== 'production',
+  env: process.env.NODE_ENV,
   port: process.env.PORT || 8000,
   apiUrl: process.env.API_URL,
   apiKeyToken: process.env.API_KEY_TOKEN,
